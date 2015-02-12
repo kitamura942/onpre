@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<script>
+//　押されたボタンごとの処理を設定
+function playAudio(myAudio, button) {
+
+　switch(button) {
+
+　　//　再生
+　　case "play":
+　　　myAudio.play();
+　　break;
+
+　　//　一時停止
+　　case "pause":
+　　　myAudio.pause();
+　　break;
+
+　　//　停止
+　　case "stop":
+　　　myAudio.pause();
+　　　myAudio.currentTime = 0;
+　　break;
+
+　}
+
+}
+<body>
+window.onload = function() {
+
+　// Audioオブジェクト作成（引数がないと、Operaでエラーになるようです）
+　var myAudio = new Audio("");
+
+　//　選択された曲を取得
+　var audio_file = document.getElementById("audio_file");
+
+　//　曲が選択されたら処理を実行
+　audio_file.addEventListener("change", function() {
+
+　　var audio_file_name_select = audio_file.selectedIndex;
+　　var audio_file_name = audio_file[audio_file_name_select].value;
+
+　　//　選択された曲の音声ファイルのパス情報を準備
+　　var ogg = "http://mae.chab.in/wp-content/uploads/music/" +
+　　　audio_file_name + ".ogg";
+　　var mp3 = "http://mae.chab.in/wp-content/uploads/music/" +
+　　　audio_file_name + ".mp3";
+
+　　//　MIMEタイプの判定用の変数
+　　var canPlayOgg = ("" != myAudio.canPlayType("audio/ogg"));
+　　var canPlayMp3 = ("" != myAudio.canPlayType("audio/mpeg"));
+
+　　//　MIMEタイプを判定し、myAudio.srcに音声ファイルのパスを指定
+　　if(canPlayOgg) {
+　　　myAudio.src = ogg;
+　　} else if(canPlayMp3) {
+　　　myAudio.src = mp3;
+　　}
+
+　　//　曲を再生
+　　myAudio.play();
+
+　　//　戻り値としてmyAudio.srcを指定
+　　return myAudio.src;
+
+　}, true);
+
+　// 押されたボタンの種類を取得し、playAudio関数に投げる
+　var audio_form_button = document.getElementById("audio_button").childNodes;
+
+　for(var i = 0; i < audio_form_button.length; i++) {
+　　audio_form_button[i].addEventListener("click", function() {
+　　　playAudio(myAudio, this.id);
+　　}, false);
+　}
+
+}
+</script>
+
+<form id="audio_form" name="audio_form">
+　<fieldset>
+　　<legend>HTML5 Audio Player</legend>
+
+　　<select name="audio_file" id="audio_file">
+　　　<option>曲を選択してください</option>
+　　　<option value="mm43">MM43</option>
+　　　<option value="mm48">MM48</option>
+　　　<option value="mm53">MM53</option>
+　　　<option value="mm41">MM41</option>
+　　　<option value="mm18">MM18</option>
+　　　<option value="mm9">MM9</option>
+　　</select>
+
+　　<div id="audio_button">
+　　　<input type="button" value="再生" id="play" />
+　　　<input type="button" value="一時停止" id="pause" />
+　　　<input type="button" value="停止" id="stop" />
+　　</div>
+　<fieldset>
+</form>
+</body>
+</html>
